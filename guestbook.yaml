@@ -237,6 +237,12 @@ spec:
   replicas: 2
   template:
     metadata:
+      annotations:
+        co.elastic.logs/module: redis
+        co.elastic.logs/fileset.stdout: log
+        co.elastic.metrics/module: redis
+        co.elastic.metrics/metricsets: "info, keyspace"
+        co.elastic.metrics/hosts: '${data.host}:${data.port}'
       labels:
         app: redis
         role: slave
