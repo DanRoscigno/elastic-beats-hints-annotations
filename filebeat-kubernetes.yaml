@@ -8,6 +8,11 @@ metadata:
     k8s-app: filebeat
 data:
   filebeat.yml: |-
+    setup.dashboards.enabled: true
+    setup.template.enabled: true
+    setup.template.settings:
+      index.number_of_shards: 1
+
     filebeat.config:
       #inputs:
         # Mounted `filebeat-inputs` configmap:
