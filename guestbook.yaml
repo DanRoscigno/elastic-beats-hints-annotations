@@ -185,6 +185,9 @@ spec:
       annotations:
         co.elastic.logs/module: redis
         co.elastic.logs/fileset.stdout: log
+        co.elastic.metrics/module: redis
+        co.elastic.metrics/metricsets: "info, keyspace"
+        co.elastic.metrics/hosts: '${data.host}:${data.port}'
       labels:
         app: redis
         role: master
@@ -300,6 +303,9 @@ spec:
         co.elastic.logs/module: apache2
         co.elastic.logs/fileset.stdout: access
         co.elastic.logs/fileset.stderr: error
+        co.elastic.metrics/module: apache
+        co.elastic.metrics/metricsets: status
+        co.elastic.metrics/hosts: '${data.host}:${data.port}'
     spec:
       containers:
       - name: php-redis
