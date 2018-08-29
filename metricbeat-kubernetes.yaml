@@ -18,24 +18,22 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:6.3.2
+        image: docker.elastic.co/beats/metricbeat:6.4.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
         ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch.default.svc.cluster.local
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: ELASTICSEARCH_USERNAME
-          value:
-        - name: ELASTICSEARCH_PASSWORD
-          value:
         - name: ELASTIC_CLOUD_ID
-          value:
-        - name: ELASTIC_CLOUD_AUTH
-          value:
+          valueFrom:
+            secretKeyRef:
+              name: dynamic-logging
+              key: ELASTIC_CLOUD_ID
+        - name: ELASTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dynamic-logging
+              key: ELASTIC_PASSWORD
         securityContext:
           runAsUser: 0
         resources:
@@ -135,26 +133,7 @@ data:
       providers:
         - type: kubernetes
           host: ${HOSTNAME}
-          templates:
-            - condition.equals:
-                kubernetes.labels.app: redis
-              config:
-                - module: redis
-                  metricsets: ["info", "keyspace"]
-                  period: 10s
-
-                  # Redis hosts
-                  hosts: ["${data.host}:6379"]
-
-            - condition.contains:
-                kubernetes.container.name: apache
-              config:
-                - module: apache
-                  metricsets: ["status"]
-                  period: 10s
-
-                  # Apache hosts
-                  hosts: ["http://${data.host}:80"]
+          hints.enabled: true
 
     processors:
       - add_cloud_metadata:
@@ -211,7 +190,7 @@ spec:
       serviceAccountName: metricbeat
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:6.3.2
+        image: docker.elastic.co/beats/metricbeat:6.4.0
         #imagePullPolicy: Always
         args: [
           "-c", "/etc/metricbeat.yml",
