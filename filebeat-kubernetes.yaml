@@ -81,12 +81,6 @@ spec:
             secretKeyRef:
               name: dynamic-logging
               key: ELASTIC_PASSWORD
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: ELASTICSEARCH_USERNAME
-          value: elastic
         securityContext:
           runAsUser: 0
         resources:
