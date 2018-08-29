@@ -1,5 +1,3 @@
-#### Note: These instructions have been tested in Google Cloud Platform Kubernetes Engine and IBM Cloud Kubernetes Service.  I hope that they work everywhere else, and I will test them in other places as I am able.
-
 ### Create an Elastic Cloud deployment
 You can use Elastic Cloud ( http://cloud.elastic.co ), or a local deployment, or deploy containers from https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 
@@ -18,34 +16,18 @@ kubectl create clusterrolebinding cluster-admin-binding \
  --clusterrole=cluster-admin --user=<your email associated with the Cloud provider account>
 ```
 
-### Clone the YAML files
-Either clone the entire Elastic examples repo or use the wget commands in download.txt:
-
-```
-mkdir MonitoringKubernetes
-cd MonitoringKubernetes
-wget https://raw.githubusercontent.com/elastic/examples/master/MonitoringKubernetes/download.txt
-sh download.txt
-```
-
-OR
-
-```
-git clone https://github.com/elastic/examples.git
-cd examples/MonitoringKubernetes
-```
 ### Set the credentials
 Set these with the values from the http://cloud.elastic.co deployment
 
 ```
 vi ELASTIC_PASSWORD
-vi CLOUD_ID
+vi ELASTIC_CLOUD_ID
 ```
 and create a secret in the Kubernetes system level namespace
 
 ```
 kubectl create secret generic dynamic-logging \
---from-file=./ELASTIC_PASSWORD --from-file=./CLOUD_ID \
+--from-file=./ELASTIC_PASSWORD --from-file=./ELASTIC_CLOUD_ID \
 --namespace=kube-system
 ```
 
@@ -59,7 +41,8 @@ and create it if needed (by default it will not be there)
 go get k8s.io/kube-state-metrics
 cd ${USER}/gopath/src/k8s.io/kube-state-metrics # Note: you may not have a gopath dir, it may be ${USER}/go/ instead, or ?
 make container
-kubectl create -f kubernetes
+git clone https://github.com/kubernetes/kube-state-metrics.git kube-state-metrics
+kubectl create -f kube-state-metrics/kubernetes
 kubectl get pods --namespace=kube-system | grep kube-state 
 ```
 
